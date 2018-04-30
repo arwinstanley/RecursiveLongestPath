@@ -1,3 +1,4 @@
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Scanner;
 /**
@@ -44,11 +45,99 @@ public class RecursiveLongestPath {
 	 * @param colR is the index of columns
 	 * @return an int that is the value of the largest possible path
 	 * 
-	 * TBD
-	 * 
+	 * Should recursively iterate through an array and return the int value of the largest possible path, using all 8 directions
+	 * Currently can not be run because it's either un-ending or uses to much data
 	 */
-	public static int recurse(int rowR, int colR) {
-		return 0;
+	public static int recurse(int rowR, int colR, ArrayList<Point> prev ) {
+		ArrayList<Point> test = new ArrayList<Point>();
+		for(int i = 0; i < prev.size();i++) {
+			test.add(prev.get(i));
+		}
+		int[] vals = new int[8];
+		int output;
+		//ender
+		for(int i = 0; i < test.size();i++) {
+			if(new Point(rowR, colR).equals(test.get(i))) {
+				return 0;
+			}
+		}
+		test.add(new Point(rowR, colR));
+		if((colR+1>=col && rowR+1>=row)||(colR-1==-1 && rowR+1>=row)||(colR+1>=col && rowR-1==-1)||(colR-1==-1 && rowR-1==-1)) {
+			return (board[rowR][colR]);
+		}
+		if(rowR+1>=row) {
+			vals[0] = recurse(rowR, colR-1, test);
+			vals[1] = recurse(rowR, colR+1, test);
+			vals[2] = recurse(rowR-1, colR+1, test);
+			vals[3] = recurse(rowR-1, colR, test);
+			vals[4] =recurse(rowR-1, colR-1, test);
+			output = vals[4];
+			for(int i = 0; i<4;i++ ) {
+				if(vals[i]>=vals[i+1]) {
+					output = vals[i];
+				}
+			}
+			return board[rowR][colR]+output;
+		}
+		if(colR+1>=col) {
+			vals[0] = recurse(rowR-1, colR, test);
+			vals[1] = recurse(rowR+1, colR, test);
+			vals[2] = recurse(rowR+1, colR-1, test);
+			vals[3] = recurse(rowR, colR-1, test);
+			vals[4] =recurse(rowR-1, colR-1, test);
+			output = vals[4];
+			for(int i = 0; i<4;i++ ) {
+				if(vals[i]>=vals[i+1]) {
+					output = vals[i];
+				}
+			}
+			return board[rowR][colR]+output;
+		}
+		if(rowR-1==-1) {
+			vals[0] = recurse(rowR, colR-1, test);
+			vals[1] = recurse(rowR, colR+1, test);
+			vals[2] = recurse(rowR+1, colR+1, test);
+			vals[3] = recurse(rowR+1, colR, test);
+			vals[4] =recurse(rowR+1, colR-1, test);
+			output = vals[4];
+			for(int i = 0; i<4;i++ ) {
+				if(vals[i]>=vals[i+1]) {
+					output = vals[i];
+				}
+			}
+			return board[rowR][colR]+output;
+		}
+		if(colR-1==-1) {
+			vals[0] = recurse(rowR-1, colR, test);
+			vals[1] = recurse(rowR+1, colR, test);
+			vals[2] = recurse(rowR+1, colR+1, test);
+			vals[3] = recurse(rowR, colR+1, test);
+			vals[4] =recurse(rowR-1, colR+1, test);
+			output = vals[4];
+			for(int i = 0; i<4;i++ ) {
+				if(vals[i]>=vals[i+1]) {
+					output = vals[i];
+				}
+			}
+			return board[rowR][colR]+output;
+		}
+		vals[0] = recurse(rowR+1, colR, test);
+		vals[1] = recurse(rowR, colR+1, test);
+		vals[2] = recurse(rowR+1, colR+1, test);
+		vals[3] = recurse(rowR-1, colR, test);
+		vals[4] =recurse(rowR, colR-1, test);
+		vals[5] =recurse(rowR-1, colR-1, test);
+		vals[6] =recurse(rowR+1, colR-1, test);
+		vals[7] =recurse(rowR-1, colR+1, test);
+		
+		output = vals[7];
+		for(int i = 0; i<7;i++ ) {
+			if(vals[i]>=vals[i+1]) {
+				output = vals[i];
+			}
+		}
+		//printPrev(test);
+		return board[rowR][colR]+output;
 	}
 	/**
 	 * @param rowR is the index of rows
@@ -100,6 +189,22 @@ public class RecursiveLongestPath {
 		System.out.println("The starting point is {"+startRow+", "+ startCol+"}" );
 	}
 	/**
+	 * @param p is the ARrayList to be printed
+	 * @return none
+	 * 
+	 * Prints out the arraylist of Points prev, this is only ever called by recurse
+	 * 
+	 */
+	public static void printPrev(ArrayList<Point> p ) {
+		System.out.println();
+		System.out.print("{ ");
+		for(int i = 0; i<p.size();i++) {
+			System.out.print("("+p.get(i).getX()+", "+p.get(i).getY()+"), ");
+		}
+		System.out.print("}");
+		System.out.println();
+	}
+	/**
 	 * @param args is an array of arguments the program takes in on startup
 	 * @return none
 	 * 
@@ -127,6 +232,10 @@ public class RecursiveLongestPath {
 		printStart();
 		System.out.println("End Point is "+ (row-1) + ", "+ (col-1));
 		System.out.println(""+recurseDownRight(startRow, startCol));
+		ArrayList<Point> prev = new ArrayList<Point>();
+		prev.add(new Point(-1,-1));
+		//READ THE JAVADOC FOR RECURSE
+		//System.out.println(""+recurse(startRow, startCol, prev));
 		input.close();
 	}
 }
